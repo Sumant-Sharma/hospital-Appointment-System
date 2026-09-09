@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Patient Registration - CarePulse Hospital{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card custom-card border-0 shadow-lg p-4 p-md-5 rounded-4">
+                <div class="text-center mb-4">
+                    <div class="bg-light text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fa-solid fa-user-plus fs-3"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Create Patient Account</h3>
+                    <p class="text-muted small">Register to book online appointments and access medical records</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg rounded-3 fw-semibold">
+                            Complete Registration <i class="fa-solid fa-check-circle ms-1"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-0">Already registered?</p>
+                    <a href="{% url 'accounts:login' %}" class="fw-bold text-decoration-none">Sign In to Your Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

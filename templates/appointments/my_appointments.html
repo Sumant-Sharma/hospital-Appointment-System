@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}My Appointments - CarePulse Hospital{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="fa-solid fa-calendar-check text-primary me-2"></i> Appointments Directory</h3>
+            <p class="text-muted mb-0">View, filter, and track status of hospital consultations</p>
+        </div>
+        {% if user.is_patient %}
+            <a href="{% url 'appointments:book' %}" class="btn btn-primary rounded-pill shadow-sm">
+                <i class="fa-solid fa-plus me-1"></i> Book New Appointment
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Status Filters -->
+    <div class="d-flex gap-2 mb-4 overflow-auto pb-2">
+        <a href="{% url 'appointments:my_appointments' %}" class="btn btn-sm {% if not selected_status %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">All Appointments</a>
+        <a href="{% url 'appointments:my_appointments' %}?status=pending" class="btn btn-sm {% if selected_status == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %} rounded-pill px-3">Pending</a>
+        <a href="{% url 'appointments:my_appointments' %}?status=confirmed" class="btn btn-sm {% if selected_status == 'confirmed' %}btn-primary{% else %}btn-outline-primary{% endif %} rounded-pill px-3">Confirmed</a>
+        <a href="{% url 'appointments:my_appointments' %}?status=completed" class="btn btn-sm {% if selected_status == 'completed' %}btn-success{% else %}btn-outline-success{% endif %} rounded-pill px-3">Completed</a>
+        <a href="{% url 'appointments:my_appointments' %}?status=cancelled" class="btn btn-sm {% if selected_status == 'cancelled' %}btn-danger{% else %}btn-outline-danger{% endif %} rounded-pill px-3">Cancelled</a>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card custom-card border-0 p-4 rounded-4 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Doctor</th>
+                        <th>Patient</th>
+                        <th>Date & Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments %}
+                        <tr>
+                            <td class="fw-bold font-monospace">#{{ appt.id }}</td>
+                            <td>
+                                <div class="fw-semibold text-dark">{{ appt.doctor.get_full_title }}</div>
+                                <small class="text-teal">{{ appt.doctor.department.name }}</small>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-dark">{{ appt.patient.user.get_full_name|default:appt.patient.user.username }}</div>
+                                <small class="text-muted">{{ appt.patient.user.phone|default:"No phone" }}</small>
+                            </td>
+                            <td>
+                                <div><i class="fa-regular fa-calendar me-1"></i> {{ appt.date }}</div>
+                                <small class="text-muted"><i class="fa-regular fa-clock me-1"></i> {{ appt.time_slot|time:"H:i" }}</small>
+                            </td>
+                            <td><small>{{ appt.reason|truncatewords:6 }}</small></td>
+                            <td>
+                                <span class="badge badge-status-{{ appt.status }} px-3 py-2 rounded-pill text-capitalize">
+                                    {{ appt.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'appointments:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-primary rounded-pill">View Detail</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fa-regular fa-calendar-xmark fs-2 d-block mb-2 text-secondary"></i>
+                                No appointments found matching your filter criteria.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

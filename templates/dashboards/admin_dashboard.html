@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - CarePulse Hospital System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="fa-solid fa-shield-halved text-danger me-2"></i> System Executive Dashboard</h3>
+            <p class="text-muted mb-0">Overview of clinical staff, patient registrations, and appointment activities</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'doctors:create_doctor' %}" class="btn btn-primary rounded-pill shadow-sm">
+                <i class="fa-solid fa-user-doctor me-1"></i> Register New Doctor
+            </a>
+            <a href="{% url 'doctors:manage_departments' %}" class="btn btn-outline-secondary rounded-pill">
+                <i class="fa-solid fa-hospital me-1"></i> Manage Departments
+            </a>
+        </div>
+    </div>
+
+    <!-- Stat Cards Row -->
+    <div class="row gy-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Total Doctors</span>
+                        <h2 class="fw-bold text-dark mb-0 mt-1">{{ total_doctors }}</h2>
+                    </div>
+                    <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Total Patients</span>
+                        <h2 class="fw-bold text-dark mb-0 mt-1">{{ total_patients }}</h2>
+                    </div>
+                    <div class="stat-icon-wrapper bg-info bg-opacity-10 text-info">
+                        <i class="fa-solid fa-hospital-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Total Appointments</span>
+                        <h2 class="fw-bold text-dark mb-0 mt-1">{{ total_appointments }}</h2>
+                    </div>
+                    <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Pending Approval</span>
+                        <h2 class="fw-bold text-warning mb-0 mt-1">{{ pending_appointments }}</h2>
+                    </div>
+                    <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row gy-4">
+        <!-- Recent Appointments Table -->
+        <div class="col-lg-8">
+            <div class="card custom-card border-0 p-4 rounded-4 shadow-sm">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-list-check me-2 text-primary"></i> Recent System Appointments</h5>
+                    <a href="{% url 'appointments:my_appointments' %}" class="btn btn-sm btn-link text-decoration-none">View All</a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date & Slot</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in recent_appointments %}
+                                <tr>
+                                    <td>
+                                        <span class="fw-semibold text-dark">{{ appt.patient.user.get_full_name|default:appt.patient.user.username }}</span>
+                                    </td>
+                                    <td>
+                                        <div>{{ appt.doctor.get_full_title }}</div>
+                                        <small class="text-muted">{{ appt.doctor.department.name }}</small>
+                                    </td>
+                                    <td>
+                                        <div><i class="fa-regular fa-calendar me-1"></i> {{ appt.date }}</div>
+                                        <small class="text-muted"><i class="fa-regular fa-clock me-1"></i> {{ appt.time_slot|time:"H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-status-{{ appt.status }} px-3 py-2 rounded-pill text-capitalize">
+                                            {{ appt.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'appointments:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-primary rounded-pill">Details</a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">No appointments found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctors Quick Roster -->
+        <div class="col-lg-4">
+            <div class="card custom-card border-0 p-4 rounded-4 shadow-sm">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-doctor me-2 text-teal"></i> Active Medical Roster</h5>
+                <div class="list-group list-group-flush">
+                    {% for doc in doctors %}
+                        <div class="list-group-item px-0 py-3 border-bottom d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">{{ doc.get_full_title }}</h6>
+                                <small class="text-muted">{{ doc.specialization }} ({{ doc.department.name }})</small>
+                            </div>
+                            <span class="badge bg-light text-dark font-monospace">${{ doc.consultation_fee }}</span>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small">No doctors registered yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

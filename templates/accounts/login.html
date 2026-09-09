@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login - CarePulse Hospital System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card custom-card border-0 shadow-lg p-4 p-md-5 rounded-4">
+                <div class="text-center mb-4">
+                    <div class="bg-light text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fa-solid fa-right-to-bracket fs-3"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Welcome Back</h3>
+                    <p class="text-muted small">Sign in to your CarePulse Hospital account</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-3 fw-semibold">
+                            Sign In <i class="fa-solid fa-arrow-right-to-bracket ms-1"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-0">Don't have a patient account yet?</p>
+                    <a href="{% url 'accounts:register_patient' %}" class="fw-bold text-decoration-none">Register as Patient Here</a>
+                </div>
+            </div>
+
+            <!-- Demo Credentials Helper Note -->
+            <div class="card bg-light border-0 rounded-4 mt-4 p-3 text-dark">
+                <h6 class="fw-bold mb-2 text-secondary"><i class="fa-solid fa-key me-1"></i> Seeded Demo Credentials</h6>
+                <ul class="list-unstyled small mb-0 text-muted lh-lg">
+                    <li><strong>Admin:</strong> <code>admin</code> / <code>admin123</code></li>
+                    <li><strong>Doctor:</strong> <code>dr_smith</code> / <code>doctor123</code></li>
+                    <li><strong>Patient:</strong> <code>patient_john</code> / <code>patient123</code></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,137 @@
+:root {
+  --primary-color: #0d6efd;
+  --teal-primary: #0f766e;
+  --teal-accent: #14b8a6;
+  --dark-slate: #0f172a;
+  --light-bg: #f8fafc;
+  --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--light-bg);
+  color: #334155;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+}
+
+/* Custom Navbar */
+.navbar-brand-custom {
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #0f766e !important;
+  letter-spacing: -0.5px;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: #475569;
+}
+
+.nav-link:hover {
+  color: var(--teal-primary);
+}
+
+/* Hero Banner */
+.hero-section {
+  background: linear-gradient(135deg, #0f766e 0%, #0369a1 100%);
+  color: #ffffff;
+  padding: 4.5rem 0 5rem 0;
+  border-radius: 0 0 2rem 2rem;
+}
+
+.hero-title {
+  font-size: 2.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* Stat Cards */
+.stat-card {
+  border: none;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+/* Custom Badges */
+.badge-status-pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.badge-status-confirmed {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-status-completed {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-status-cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Glassmorphism Cards */
+.custom-card {
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: var(--card-shadow);
+}
+
+.doctor-card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: var(--card-shadow);
+  transition: all 0.25s ease;
+}
+
+.doctor-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+}
+
+.doctor-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e2e8f0;
+}
+
+/* Footer */
+.footer-custom {
+  background-color: var(--dark-slate);
+  color: #e2e8f0;
+  padding: 2.5rem 0 1.5rem 0;
+  margin-top: 4rem;
+}
+
+.footer-custom a:hover {
+  color: #38bdf8 !important;
+  text-decoration: underline !important;
+}

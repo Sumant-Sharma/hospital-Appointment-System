@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ doctor.get_full_title }} - CarePulse Hospital{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row gy-4">
+        <!-- Profile Column -->
+        <div class="col-lg-5">
+            <div class="card custom-card border-0 p-4 rounded-4 shadow-sm text-center">
+                {% if doctor.profile_picture %}
+                    <img src="{{ doctor.profile_picture.url }}" alt="{{ doctor.get_full_title }}" class="doctor-avatar mx-auto mb-3" style="width: 120px; height: 120px;">
+                {% else %}
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold fs-1 mx-auto mb-3" style="width: 120px; height: 120px;">
+                        {{ doctor.user.first_name|slice:":1" }}{{ doctor.user.last_name|slice:":1" }}
+                    </div>
+                {% endif %}
+
+                <h3 class="fw-bold mb-1">{{ doctor.get_full_title }}</h3>
+                <span class="badge bg-light text-primary border px-3 py-2 rounded-pill fs-6 mb-3 d-inline-block">{{ doctor.department.name }}</span>
+                <p class="text-muted small mb-4">{{ doctor.specialization }}</p>
+
+                <div class="bg-light p-3 rounded-3 text-start mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted"><i class="fa-solid fa-graduation-cap me-2 text-primary"></i> Qualification:</span>
+                        <span class="fw-semibold">{{ doctor.qualification }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted"><i class="fa-solid fa-clock-rotate-left me-2 text-info"></i> Experience:</span>
+                        <span class="fw-semibold">{{ doctor.experience_years }} Years</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted"><i class="fa-solid fa-tag me-2 text-success"></i> Consultation Fee:</span>
+                        <span class="fw-bold text-success fs-5">${{ doctor.consultation_fee }}</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'appointments:book' %}?doctor={{ doctor.id }}" class="btn btn-primary btn-lg rounded-pill w-100 fw-semibold shadow-sm">
+                    <i class="fa-solid fa-calendar-check me-2"></i> Book Appointment Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Bio & Weekly Availability Schedule -->
+        <div class="col-lg-7">
+            <div class="card custom-card border-0 p-4 rounded-4 shadow-sm mb-4">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-user-doctor text-primary me-2"></i> Biography & Background</h5>
+                <p class="text-secondary lh-lg mb-0">{{ doctor.bio|default:"No extended biography available for this practitioner." }}</p>
+            </div>
+
+            <div class="card custom-card border-0 p-4 rounded-4 shadow-sm">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-calendar-days text-teal me-2"></i> Weekly Consultation Schedule</h5>
+                
+                {% if availabilities %}
+                    <div class="list-group list-group-flush">
+                        {% for avail in availabilities %}
+                            <div class="list-group-item px-0 py-3 border-bottom d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-teal-subtle text-teal rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        <i class="fa-regular fa-calendar-check"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">{{ avail.get_day_display_name }}s</h6>
+                                        <small class="text-muted">Slot duration: {{ avail.slot_duration_minutes }} minutes</small>
+                                    </div>
+                                </div>
+                                <span class="badge bg-light text-dark font-monospace border fs-6 px-3 py-2">
+                                    <i class="fa-regular fa-clock me-1 text-primary"></i>
+                                    {{ avail.start_time|time:"H:i" }} - {{ avail.end_time|time:"H:i" }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="fa-regular fa-clock fs-3 d-block mb-2 text-secondary"></i>
+                        Doctor has not published active working hours yet.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

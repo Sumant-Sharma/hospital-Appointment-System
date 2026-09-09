@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Dashboard - CarePulse Hospital{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Patient Banner Card -->
+    <div class="card custom-card border-0 shadow-sm p-4 rounded-4 mb-4 bg-white">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center fw-bold fs-2" style="width: 70px; height: 70px;">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1">Welcome, {{ user.get_full_name|default:user.username }}</h3>
+                    <p class="text-muted mb-0">
+                        <span class="badge bg-light text-dark border me-2">Blood Group: {{ patient.blood_group|default:"Not set" }}</span>
+                        Patient ID: #PAT-{{ patient.id|stringformat:"04d" }}
+                    </p>
+                </div>
+            </div>
+            <a href="{% url 'appointments:book' %}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">
+                <i class="fa-solid fa-calendar-plus me-2"></i> Book New Appointment
+            </a>
+        </div>
+    </div>
+
+    <div class="row gy-4">
+        <!-- Upcoming Appointments -->
+        <div class="col-lg-7">
+            <div class="card custom-card border-0 p-4 rounded-4 shadow-sm h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-bold mb-0"><i class="fa-solid fa-calendar-check text-primary me-2"></i> My Active Appointments</h5>
+                    <a href="{% url 'appointments:my_appointments' %}" class="btn btn-sm btn-link text-decoration-none">View All History</a>
+                </div>
+
+                {% if upcoming_appointments %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for appt in upcoming_appointments %}
+                            <div class="border rounded-4 p-3 bg-light d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <h6 class="fw-bold text-dark mb-0">{{ appt.doctor.get_full_title }}</h6>
+                                        <span class="badge bg-white text-primary border">{{ appt.doctor.department.name }}</span>
+                                    </div>
+                                    <div class="text-muted small">
+                                        <i class="fa-regular fa-calendar me-1"></i> {{ appt.date }} &nbsp;|&nbsp; 
+                                        <i class="fa-regular fa-clock me-1"></i> {{ appt.time_slot|time:"H:i" }}
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge badge-status-{{ appt.status }} px-3 py-2 rounded-pill text-capitalize">
+                                        {{ appt.status }}
+                                    </span>
+                                    <a href="{% url 'appointments:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-primary rounded-pill">Details</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-regular fa-calendar-plus fs-1 d-block mb-3 text-secondary"></i>
+                        <p class="mb-3">You have no upcoming appointments scheduled.</p>
+                        <a href="{% url 'appointments:book' %}" class="btn btn-outline-primary rounded-pill">Find Doctor & Book</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Browse Departments Quick Grid -->
+        <div class="col-lg-5">
+            <div class="card custom-card border-0 p-4 rounded-4 shadow-sm h-100">
+                <h5 class="fw-bold mb-3"><i class="fa-solid fa-hospital-user text-teal me-2"></i> Book by Department</h5>
+                <div class="row g-2">
+                    {% for dept in departments %}
+                        <div class="col-6">
+                            <a href="{% url 'doctors:doctor_list' %}?department={{ dept.id }}" class="text-decoration-none">
+                                <div class="border rounded-3 p-3 bg-light hover-shadow text-center transition-all">
+                                    <i class="fa-solid {{ dept.icon_class|default:'fa-stethoscope' }} fs-3 text-teal mb-2 d-block"></i>
+                                    <h6 class="fw-bold text-dark mb-0 small">{{ dept.name }}</h6>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Past Consultations Table -->
+    <div class="card custom-card border-0 p-4 rounded-4 shadow-sm mt-4">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-clock-rotate-left text-secondary me-2"></i> Past Consultations & Records</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Doctor</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Medical Record</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in past_appointments %}
+                        <tr>
+                            <td>{{ appt.date }}</td>
+                            <td class="fw-bold text-dark">{{ appt.doctor.get_full_title }}</td>
+                            <td>{{ appt.doctor.department.name }}</td>
+                            <td>
+                                <span class="badge badge-status-{{ appt.status }} px-3 py-2 rounded-pill text-capitalize">
+                                    {{ appt.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'appointments:appointment_detail' appt.id %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                    <i class="fa-solid fa-file-medical me-1"></i> View Record
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-3 text-muted">No past appointment history available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
